@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PhishGuard AI - On-Device Phishing & Threat Detection System</title>
+  <meta name="description" content="On-Device AI-Powered Real-Time Phishing and Threat Detection System for SMS, WhatsApp, Messenger, Emails, and Web URLs.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="theme-dark">
+
+  <!-- Desktop Presentation Header -->
+  <header class="top-nav-bar">
+    <div class="nav-brand">
+      <div class="brand-shield-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="brand-title">PhishGuard <span>AI</span></h1>
+        <p class="brand-subtitle">On-Device Real-Time Phishing & Anomaly Detection System</p>
+      </div>
+    </div>
+
+    <!-- Student & Lab Badge -->
+    <div class="lab-badge-container">
+      <div class="badge-item">
+        <span class="badge-label">Student:</span>
+        <span class="badge-val">Tamanna Akter (21CSE012)</span>
+      </div>
+      <div class="badge-item">
+        <span class="badge-label">Course:</span>
+        <span class="badge-val">Mobile Computing Lab (8th Sem)</span>
+      </div>
+      <div class="badge-item status-pill" id="backendStatusPill">
+        <span class="status-dot pulsing"></span>
+        <span id="backendStatusText">ML Engine: Ready</span>
+      </div>
+    </div>
+
+    <!-- View Switcher -->
+    <div class="view-controls">
+      <button class="view-toggle-btn active" id="btnPhoneView" title="Mobile Smartphone View">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        <span>Phone View</span>
+      </button>
+      <button class="view-toggle-btn" id="btnProjectorView" title="Widescreen Lab Evaluation View">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        <span>Lab Projector View</span>
+      </button>
+      <button class="view-toggle-btn sound-toggle" id="btnAudioToggle" title="Audio Alert Sound">
+        <svg id="soundOnIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+        <span id="soundText">Sound ON</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-wrapper" id="mainWrapper">
+    
+    <!-- Phone Device Shell Frame -->
+    <div class="phone-frame-container" id="phoneContainer">
+      <div class="smartphone-bezel">
+        <!-- Smartphone Speaker & Dynamic Island / Punch Hole -->
+        <div class="phone-top-island">
+          <div class="camera-hole"></div>
+          <div class="speaker-grill"></div>
+        </div>
+
+        <!-- Android 15 Status Bar -->
+        <div class="android-status-bar">
+          <div class="status-time" id="statusClock">10:45</div>
+          <div class="status-icons">
+            <span class="status-indicator">5G</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L12 22l7.03-4.39C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9z"/></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+            <span class="battery-pct">98%</span>
+          </div>
+        </div>
+
+        <!-- Android Heads-Up Notification Banner (Appears when threat intercepted!) -->
+        <div class="android-heads-up-notification" id="headsUpNotification">
+          <div class="notification-header">
+            <div class="app-icon-small">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <span class="notif-app-name">PhishGuard AI Alert</span>
+            <span class="notif-time">Just now</span>
+            <button class="notif-close-btn" id="btnCloseNotification">&times;</button>
+          </div>
+          <div class="notification-body">
+            <div class="notif-threat-pill critical" id="notifThreatBadge">CRITICAL THREAT (95.4%)</div>
+            <div class="notif-title" id="notifTitle">Phishing Attack Detected!</div>
+            <div class="notif-text" id="notifBody">Suspicious bKash PIN verification link intercepted from SMS payload.</div>
+          </div>
+          <div class="notification-actions">
+            <button class="notif-btn block-btn" id="notifBlockBtn">Block Sender</button>
+            <button class="notif-btn quarantine-btn" id="notifQuarantineBtn">Quarantine Link</button>
+          </div>
+        </div>
+
+        <!-- Phone App Screen Content Area -->
+        <div class="phone-screen-viewport">
+
+          <!-- APP VIEW 1: Dashboard / Monitor -->
+          <section class="screen-view active" id="viewDashboard">
+            <div class="app-header">
+              <div class="app-header-title">
+                <h2>Real-Time Shield</h2>
+                <p>On-Device AI Active Protection</p>
+              </div>
+              <div class="active-badge">
+                <span class="pulse-dot green"></span>
+                <span>PROTECTED</span>
+              </div>
+            </div>
+
+            <!-- Risk Radial Gauge Card -->
+            <div class="card glass-card gauge-summary-card">
+              <div class="gauge-wrapper">
+                <svg class="circular-gauge" viewBox="0 0 160 160">
+                  <circle class="gauge-bg" cx="80" cy="80" r="70"></circle>
+                  <circle class="gauge-bar" id="mainGaugeBar" cx="80" cy="80" r="70" stroke-dasharray="440" stroke-dashoffset="440"></circle>
+                </svg>
+                <div class="gauge-center-content">
+                  <span class="gauge-score-val" id="displayRiskScore">0%</span>
+                  <span class="gauge-score-label" id="displayRiskLabel">Safe</span>
+                </div>
+              </div>
+              <div class="gauge-meta-info">
+                <div class="threat-stat-row">
+                  <span class="stat-name">Threat Level:</span>
+                  <span class="stat-badge safe" id="displayThreatBadge">NORMAL</span>
+                </div>
+                <div class="threat-stat-row">
+                  <span class="stat-name">Inference Latency:</span>
+                  <span class="stat-value" id="displayLatency">12.4 ms</span>
+                </div>
+                <div class="threat-stat-row">
+                  <span class="stat-name">Privacy Lock:</span>
+                  <span class="stat-value accent">100% On-Device</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Background Listener Status Modules (Proposal Page 1 & 2) -->
+            <div class="card listener-services-card">
+              <h3 class="section-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                Background Listener Services
+              </h3>
+              <div class="listener-item">
+                <div class="listener-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <div class="listener-details">
+                  <div class="listener-title">NotificationListenerService</div>
+                  <div class="listener-sub">Intercepts SMS, WhatsApp, Messenger, Gmail</div>
+                </div>
+                <span class="service-chip active">HOOKED</span>
+              </div>
+
+              <div class="listener-item">
+                <div class="listener-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+                <div class="listener-details">
+                  <div class="listener-title">AccessibilityService</div>
+                  <div class="listener-sub">Inspects screen UI elements & URL deep-links</div>
+                </div>
+                <span class="service-chip active">ACTIVE</span>
+              </div>
+            </div>
+
+            <!-- Quick Stats Grid -->
+            <div class="stats-mini-grid">
+              <div class="mini-stat-box">
+                <span class="mini-stat-num" id="statScannedCount">24</span>
+                <span class="mini-stat-label">Scanned Today</span>
+              </div>
+              <div class="mini-stat-box">
+                <span class="mini-stat-num warning" id="statBlockedCount">7</span>
+                <span class="mini-stat-label">Threats Blocked</span>
+              </div>
+              <div class="mini-stat-box">
+                <span class="mini-stat-num purple" id="statAnomalyCount">3</span>
+                <span class="mini-stat-label">Zero-Day Anomalies</span>
+              </div>
+            </div>
+
+            <!-- Quick Action button -->
+            <button class="cta-primary-btn" id="btnGoToScanner">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span>Launch Live Threat Scanner</span>
+            </button>
+          </section>
+
+
+          <!-- APP VIEW 2: Live Threat Scanner -->
+          <section class="screen-view" id="viewScanner">
+            <div class="app-header">
+              <div class="app-header-title">
+                <h2>Threat Scanner</h2>
+                <p>Multi-Model AI On-Device Analyzer</p>
+              </div>
+            </div>
+
+            <!-- Preset Lab Demo Scenarios Selector (Crucial for Sir presentation) -->
+            <div class="preset-selector-box">
+              <label for="presetSelect" class="preset-label">
+                <span class="sparkle-icon">⚡</span> 1-Click Lab Presentation Scenarios:
+              </label>
+              <select id="presetSelect" class="custom-select">
+                <option value="" disabled selected>-- Select a test case for Sir --</option>
+                <option value="preset_bkash_smishing">📱 bKash Fake PIN Verification (SMS Smishing)</option>
+                <option value="preset_paypal_ip">🌐 PayPal IP Host Phishing (Malicious URL)</option>
+                <option value="preset_nagad_lottery">🎁 Nagad 50,000 BDT Lottery Scam (SMS)</option>
+                <option value="preset_office365_email">📧 Microsoft 365 Account Expiry (Email)</option>
+                <option value="preset_zero_day">🧠 Novel Zero-Day Anomaly (Autoencoder Spike)</option>
+                <option value="preset_legit_wikipedia">✅ Legitimate Wikipedia Article (Safe)</option>
+                <option value="preset_legit_bank">✅ Official BRAC Bank Portal (Safe)</option>
+                <option value="preset_legit_friend_sms">💬 Normal Classmate SMS (Safe)</option>
+              </select>
+            </div>
+
+            <!-- Channel Selector Tabs -->
+            <div class="channel-tabs">
+              <button class="channel-tab-btn active" data-app="sms">SMS</button>
+              <button class="channel-tab-btn" data-app="whatsapp">WhatsApp</button>
+              <button class="channel-tab-btn" data-app="email">Gmail/Email</button>
+              <button class="channel-tab-btn" data-app="messenger">Messenger</button>
+              <button class="channel-tab-btn" data-app="browser">Web URL</button>
+            </div>
+
+            <!-- Input Form Card -->
+            <div class="card scanner-form-card">
+              <div class="input-group">
+                <label for="inputSender">Sender / Address:</label>
+                <input type="text" id="inputSender" class="form-input" placeholder="e.g. +8801999887766 or service@bank.com" value="+8801999887766">
+              </div>
+
+              <div class="input-group">
+                <label for="inputText">Message Body / Payload:</label>
+                <textarea id="inputText" class="form-textarea" rows="3" placeholder="Paste or type SMS or email body...">bKash Alert: Your account has been suspended due to security violation! Immediately verify your PIN within 24 hours to reactivate: http://bkash-verify-pin-update.tk/login.php</textarea>
+              </div>
+
+              <div class="input-group">
+                <label for="inputUrl">Embedded Link / Web URL (Optional):</label>
+                <input type="text" id="inputUrl" class="form-input" placeholder="http://... or https://..." value="http://bkash-verify-pin-update.tk/login.php">
+              </div>
+
+              <div class="scanner-btn-row">
+                <button class="scan-action-btn primary" id="btnExecuteScan">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>
+                  <span id="btnScanText">Analyze On-Device</span>
+                </button>
+                <button class="scan-action-btn secondary" id="btnSimulateNotification" title="Simulate incoming push alert">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                  <span>Simulate Push</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Dynamic Scan Results Card (Filled on Scan) -->
+            <div class="card result-card" id="scanResultCard">
+              <div class="result-header">
+                <div>
+                  <span class="result-verdict-badge critical" id="resThreatBadge">CRITICAL THREAT</span>
+                  <h3 class="result-threat-title" id="resThreatTitle">Phishing Attack Detected</h3>
+                </div>
+                <div class="result-score-circle" id="resScoreCircle">
+                  <span class="score-num" id="resScoreNum">94.8%</span>
+                  <span class="score-sub">Confidence</span>
+                </div>
+              </div>
+
+              <p class="result-recommendation" id="resRecommendation">
+                High-confidence phishing attack detected. Impersonating bKash Mobile Financial Services. Do not share OTP or PIN.
+              </p>
+
+              <!-- 3-Model AI Architecture Breakdown Accordion -->
+              <div class="model-breakdown-container">
+                <div class="breakdown-header">
+                  <span>3 AI Models Inspection</span>
+                  <span class="onnx-tag">TFLite Quantized</span>
+                </div>
+
+                <!-- 1. Random Forest -->
+                <div class="model-item-card">
+                  <div class="model-item-top">
+                    <div class="model-name-group">
+                      <span class="model-badge rf">RF</span>
+                      <div>
+                        <strong>Random Forest Classifier</strong>
+                        <div class="sub-text">URL Structure & Handcrafted Features</div>
+                      </div>
+                    </div>
+                    <span class="model-risk-val high" id="resRfProb">92.0% Risk</span>
+                  </div>
+                  <div class="feature-bar-list" id="resRfFeatures">
+                    <!-- Dynamic Bars -->
+                  </div>
+                </div>
+
+                <!-- 2. Contextual NLP MobileBERT -->
+                <div class="model-item-card">
+                  <div class="model-item-top">
+                    <div class="model-name-group">
+                      <span class="model-badge nlp">NLP</span>
+                      <div>
+                        <strong>Quantized MobileBERT</strong>
+                        <div class="sub-text">Contextual Intent & Social Engineering</div>
+                      </div>
+                    </div>
+                    <span class="model-risk-val high" id="resNlpProb">96.5% Risk</span>
+                  </div>
+                  <div class="nlp-intent-badge" id="resNlpIntent">Intent: Credential Harvesting</div>
+                  <div class="nlp-attention-heatmap" id="resNlpTokens">
+                    <!-- Tokens -->
+                  </div>
+                </div>
+
+                <!-- 3. Deep Autoencoder Anomaly Detector -->
+                <div class="model-item-card">
+                  <div class="model-item-top">
+                    <div class="model-name-group">
+                      <span class="model-badge ae">AE</span>
+                      <div>
+                        <strong>Deep Autoencoder</strong>
+                        <div class="sub-text">Zero-Day Anomaly Detection (Unsupervised)</div>
+                      </div>
+                    </div>
+                    <span class="model-risk-val anomaly" id="resAeStatus">ANOMALY SPIKE</span>
+                  </div>
+                  <div class="autoencoder-loss-meter">
+                    <div class="loss-labels">
+                      <span>Reconstruction MSE: <strong id="resAeLoss">0.2754</strong></span>
+                      <span>Threshold (&epsilon;): <strong id="resAeThreshold">0.0730</strong></span>
+                    </div>
+                    <div class="loss-bar-track">
+                      <div class="loss-bar-fill" id="resAeLossFill" style="width: 85%;"></div>
+                      <div class="threshold-line" id="resAeThresholdLine" style="left: 35%;"></div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+
+          <!-- APP VIEW 3: Real-Time Audit Log (SQLite / Room) -->
+          <section class="screen-view" id="viewLogs">
+            <div class="app-header">
+              <div class="app-header-title">
+                <h2>Local Audit Logs</h2>
+                <p>On-Device SQLite / Room Storage</p>
+              </div>
+              <button class="icon-small-btn" id="btnClearLogs" title="Clear Logs">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+
+            <!-- Filter Chips -->
+            <div class="filter-chips-row">
+              <button class="chip-btn active" data-filter="all">All Logs (<span id="countAllLogs">0</span>)</button>
+              <button class="chip-btn" data-filter="phishing">Phishing</button>
+              <button class="chip-btn" data-filter="suspicious">Suspicious</button>
+              <button class="chip-btn" data-filter="safe">Safe</button>
+            </div>
+
+            <!-- Audit Log Records List -->
+            <div class="audit-log-list" id="auditLogList">
+              <div class="empty-state">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <p>No threat logs yet. Run a scan or trigger a preset scenario above.</p>
+              </div>
+            </div>
+
+            <!-- Export Buttons for Lab Submission -->
+            <div class="export-actions-row">
+              <button class="export-btn" id="btnExportCsv">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Export CSV</span>
+              </button>
+              <button class="export-btn accent" id="btnPrintReport">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                <span>Print Lab Report</span>
+              </button>
+            </div>
+          </section>
+
+
+          <!-- APP VIEW 4: Lab Architecture & Viva Guide -->
+          <section class="screen-view" id="viewArchitecture">
+            <div class="app-header">
+              <div class="app-header-title">
+                <h2>System Architecture</h2>
+                <p>Proposal Flowchart & Lab Evaluation</p>
+              </div>
+            </div>
+
+            <!-- Proposal Details Card -->
+            <div class="card proposal-meta-card">
+              <div class="meta-badge-grid">
+                <div><strong>Student:</strong> Tamanna Akter</div>
+                <div><strong>Roll:</strong> 21CSE012</div>
+                <div><strong>Semester:</strong> 8th Sem Mobile Lab</div>
+                <div><strong>Target OS:</strong> Android 14+ (ARM64)</div>
+              </div>
+            </div>
+
+            <!-- Flowchart Visualizer (Proposal Page 3 Replica) -->
+            <div class="card flowchart-card">
+              <h3 class="section-title">PhishGuard AI Flowchart Pipeline</h3>
+              <div class="flow-steps">
+                <div class="flow-box">
+                  <div class="flow-tag">1. Interception</div>
+                  <div class="flow-title">Android Background Listeners</div>
+                  <div class="flow-desc">NotificationListenerService (SMS, WhatsApp, Gmail) + AccessibilityService (Screen URLs)</div>
+                </div>
+                <div class="flow-arrow">&darr;</div>
+                <div class="flow-box">
+                  <div class="flow-tag">2. Preprocessing</div>
+                  <div class="flow-title">Feature Extraction (16 Dims)</div>
+                  <div class="flow-desc">URL Entropy, IP Host, Special Chars, NLP Urgency & Financial Lures</div>
+                </div>
+                <div class="flow-arrow">&darr;</div>
+                <div class="flow-box highlight">
+                  <div class="flow-tag">3. On-Device AI Inference</div>
+                  <div class="flow-title">Parallel Quantized Models (TFLite)</div>
+                  <div class="flow-desc">
+                    &bull; Random Forest (Structured URLs)<br>
+                    &bull; MobileBERT (Message Semantics)<br>
+                    &bull; Deep Autoencoder (Zero-Day Anomaly)
+                  </div>
+                </div>
+                <div class="flow-arrow">&darr;</div>
+                <div class="flow-box">
+                  <div class="flow-tag">4. Decision & Alert Engine</div>
+                  <div class="flow-title">Risk Threshold Evaluation</div>
+                  <div class="flow-desc">
+                    Score &ge; 68%: High-Priority Heads-Up Warning Alert<br>
+                    Score &lt; 40%: Allowed & Logged into SQLite DB
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Viva Answers for Sir -->
+            <div class="card viva-faq-card">
+              <h3 class="section-title">Lab Viva Q&amp;A (Quick Reference for Sir)</h3>
+              <details class="viva-item">
+                <summary>Q1: Why use an Autoencoder instead of only supervised classification?</summary>
+                <div class="viva-answer">
+                  Supervised models (like Random Forest) only recognize known phishing attack patterns present in training data. Attackers frequently invent <em>Zero-Day</em> polymorphic URLs or novel obfuscations. The Autoencoder is trained <strong>only on legitimate communications</strong>; when an unseen threat arrives, its reconstruction error (MSE) spikes above threshold &epsilon;, flagging zero-day threats without needing prior labels!
+                </div>
+              </details>
+              <details class="viva-item">
+                <summary>Q2: How does on-device inference protect user privacy?</summary>
+                <div class="viva-answer">
+                  Traditional scanners send full message bodies, contacts, and bank OTPs to cloud servers. PhishGuard AI runs quantized INT8 TFLite / ONNX models <strong>100% locally on device</strong> using mobile ARM NEON/NPU. Zero raw text leaves the phone!
+                </div>
+              </details>
+              <details class="viva-item">
+                <summary>Q3: How does NotificationListenerService intercept messages?</summary>
+                <div class="viva-answer">
+                  Android's <code>NotificationListenerService</code> receives <code>StatusBarNotification</code> broadcasts from system apps (SMS, WhatsApp, Gmail). It extracts <code>EXTRA_TEXT</code> and <code>EXTRA_TITLE</code> bundles for inspection before the user clicks malicious links.
+                </div>
+              </details>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- Android 15 Bottom Navigation Bar (Material 3 Navigation Bar) -->
+        <nav class="android-bottom-nav">
+          <button class="nav-tab-btn active" data-target="viewDashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            <span>Shield</span>
+          </button>
+          <button class="nav-tab-btn" data-target="viewScanner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span>Scanner</span>
+          </button>
+          <button class="nav-tab-btn" data-target="viewLogs">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <span>Audit DB</span>
+          </button>
+          <button class="nav-tab-btn" data-target="viewArchitecture">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+            <span>Lab Docs</span>
+          </button>
+        </nav>
+
+        <!-- Android Navigation Gesture Bar / Home Pill -->
+        <div class="android-nav-pill-wrapper">
+          <div class="android-nav-pill"></div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- Desktop Side Panel: Visible in "Lab Projector View" -->
+    <aside class="desktop-side-dashboard" id="desktopSideDashboard">
+      <div class="dashboard-panel-header">
+        <h2>Mobile Computing Lab Evaluation Center</h2>
+        <span class="pulse-tag">LIVE ML TELEMETRY</span>
+      </div>
+
+      <!-- Real-Time Metrics & Confusion Matrix -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-title">Test Accuracy</div>
+          <div class="metric-num text-emerald" id="labMetricAccuracy">98.4%</div>
+          <div class="metric-desc">Stratified 20% Evaluation Split</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-title">F1-Score</div>
+          <div class="metric-num text-blue" id="labMetricF1">97.8%</div>
+          <div class="metric-desc">Harmonic Mean of Prec & Rec</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-title">Precision</div>
+          <div class="metric-num text-purple" id="labMetricPrecision">98.1%</div>
+          <div class="metric-desc">Zero False Positive Strictness</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-title">Inference Speed</div>
+          <div class="metric-num text-amber" id="labMetricLatency">12.8 ms</div>
+          <div class="metric-desc">Quantized INT8 Mobile ARM</div>
+        </div>
+      </div>
+
+      <!-- Live Feature Attribution Stream -->
+      <div class="telemetry-box">
+        <h3>Feature Attribution & Anomaly Diagnostics</h3>
+        <p class="telemetry-subtitle">Shows live handcrafted vector components & Autoencoder reconstruction errors</p>
+        <div class="telemetry-table-wrapper">
+          <table class="telemetry-table" id="telemetryTable">
+            <thead>
+              <tr>
+                <th>Feature Name</th>
+                <th>Input Value</th>
+                <th>Recon Value</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="telemetryTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Teacher Evaluation Notes & Presentation Cheatsheet -->
+      <div class="teacher-notes-box">
+        <h3>Demo Instructions for Lab Sir</h3>
+        <ol>
+          <li>Click any <strong>1-Click Lab Presentation Scenario</strong> in the phone view (e.g., bKash Fake PIN or Zero-Day Anomaly).</li>
+          <li>Click <strong>Analyze On-Device</strong> to trigger the multi-model decision pipeline.</li>
+          <li>Observe the real-time Android status bar alert drop down with sound notification.</li>
+          <li>Check the <strong>Audit DB</strong> tab to show Sir how all records are logged in the local SQLite/Room database.</li>
+          <li>Click <strong>Print Lab Report</strong> to generate a formatted printable academic evaluation report.</li>
+        </ol>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- External Script -->
+  <script src="js/app.js"></script>
+</body>
+</html>

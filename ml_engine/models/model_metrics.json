@@ -1,0 +1,51 @@
+{
+  "model_architecture": "Ensemble (Random Forest + MobileBERT Intent + Deep Autoencoder)",
+  "dataset_size": 260,
+  "test_samples": 52,
+  "accuracy": 100.0,
+  "precision": 100.0,
+  "recall": 100.0,
+  "f1_score": 100.0,
+  "confusion_matrix": {
+    "true_negatives": 26,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "true_positives": 26
+  },
+  "autoencoder_threshold": 0.07295,
+  "top_features": [
+    {
+      "feature": "Special Char Density",
+      "importance": 0.2123
+    },
+    {
+      "feature": "Suspicious TLD",
+      "importance": 0.1978
+    },
+    {
+      "feature": "Urgency & Panic Language",
+      "importance": 0.1069
+    },
+    {
+      "feature": "Domain Length",
+      "importance": 0.0961
+    },
+    {
+      "feature": "Domain Entropy",
+      "importance": 0.0814
+    },
+    {
+      "feature": "Digit Ratio",
+      "importance": 0.0687
+    },
+    {
+      "feature": "Credential Harvesting Cues",
+      "importance": 0.0596
+    },
+    {
+      "feature": "Missing HTTPS",
+      "importance": 0.0539
+    }
+  ],
+  "latency_ms_estimate": 14.2
+}

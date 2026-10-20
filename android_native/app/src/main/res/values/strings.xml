@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">PhishGuard AI</string>
+    <string name="accessibility_service_description">PhishGuard AI inspects screen content and deep-links in real-time to alert users of phishing attacks and malicious websites.</string>
+</resources>
