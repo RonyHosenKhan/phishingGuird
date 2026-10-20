@@ -29,10 +29,11 @@ jobs:
 
       - name: Build Debug APK with Gradle
         working-directory: android_native
-        run: gradle assembleDebug --stacktrace
+        run: gradle assembleDebug --stacktrace --no-daemon
 
       - name: Upload Installable APK Artifact
         uses: actions/upload-artifact@v4
+        if: success()
         with:
           name: PhishGuardAI-Debug-APK
           path: android_native/app/build/outputs/apk/debug/app-debug.apk
