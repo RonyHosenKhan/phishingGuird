@@ -9,8 +9,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.provider.Settings
 import android.text.TextUtils
 import android.widget.Button
@@ -41,8 +43,23 @@ class MainActivity : AppCompatActivity() {
             val text = intent?.getStringExtra("text") ?: ""
             val pkg = intent?.getStringExtra("package") ?: ""
             runOnUiThread {
-                tvRecentLog.text = "⚡ Intercepted [${pkg.substringAfterLast('.')}]:\nFrom: $sender\nMessage: $text"
+                tvRecentLog.text = "⚡ LIVE INTERCEPTED [${pkg.substringAfterLast('.')}]:\nFrom: $sender\nPayload: $text"
                 refreshLogs()
+            }
+        }
+    }
+
+    private val statusReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val isBound = intent?.getBooleanExtra("isBound", false) ?: false
+            runOnUiThread {
+                if (isBound) {
+                    tvStatus.text = "🟢 Active Protection: ON\nListener Service Bound & Monitoring WhatsApp, SMS, Messenger!"
+                    tvStatus.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.threat_safe))
+                } else {
+                    tvStatus.text = "🟡 Listener Warning: Re-binding needed\nTap 'Refresh Listener' below."
+                    tvStatus.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.threat_warning))
+                }
             }
         }
     }
@@ -59,6 +76,7 @@ class MainActivity : AppCompatActivity() {
         val btnNotif = findViewById<Button>(R.id.btnEnableNotificationListener)
         val btnAccess = findViewById<Button>(R.id.btnEnableAccessibility)
         val btnTest = findViewById<Button>(R.id.btnTestSampleNotification)
+        val btnRebind = findViewById<Button>(R.id.btnRebindService)
 
         // Request POST_NOTIFICATIONS permission on Android 13+ (API 33+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -68,13 +86,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnNotif.setOnClickListener {
-            // Open Android Notification Access Settings
             startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
-            Toast.makeText(this, "Enable 'PhishGuard AI' toggle", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Ensure 'PhishGuard AI' toggle is ON", Toast.LENGTH_LONG).show()
         }
 
         btnAccess.setOnClickListener {
-            // Open Android Accessibility Settings
             startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
             Toast.makeText(this, "Enable 'PhishGuard Screen Inspector'", Toast.LENGTH_LONG).show()
         }
@@ -83,12 +99,24 @@ class MainActivity : AppCompatActivity() {
             triggerSampleThreatAlert()
         }
 
-        val filter = IntentFilter("com.tamanna.phishguard.NEW_PAYLOAD")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(payloadReceiver, filter, Context.RECEIVER_EXPORTED)
-        } else {
-            registerReceiver(payloadReceiver, filter)
+        btnRebind.setOnClickListener {
+            forceRebindService()
         }
+
+        // Register Receivers
+        val filterPayload = IntentFilter("com.tamanna.phishguard.NEW_PAYLOAD")
+        val filterStatus = IntentFilter("com.tamanna.phishguard.STATUS_UPDATE")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(payloadReceiver, filterPayload, Context.RECEIVER_EXPORTED)
+            registerReceiver(statusReceiver, filterStatus, Context.RECEIVER_EXPORTED)
+        } else {
+            registerReceiver(payloadReceiver, filterPayload)
+            registerReceiver(statusReceiver, filterStatus)
+        }
+
+        // Check Battery Optimization
+        checkBatteryOptimization()
     }
 
     override fun onResume() {
@@ -100,6 +128,43 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(payloadReceiver)
+        unregisterReceiver(statusReceiver)
+    }
+
+    private fun forceRebindService() {
+        try {
+            val component = ComponentName(this, PhishGuardNotificationListener::class.java)
+            packageManager.setComponentEnabledSetting(
+                component,
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP
+            )
+            packageManager.setComponentEnabledSetting(
+                component,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP
+            )
+            Toast.makeText(this, "🔄 Listener Service refreshed & re-bound!", Toast.LENGTH_SHORT).show()
+            updateStatus()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error re-binding: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun checkBatteryOptimization() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+            if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+                try {
+                    val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                        data = Uri.parse("package:$packageName")
+                    }
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    // Ignore if not supported
+                }
+            }
+        }
     }
 
     private fun updateStatus() {
@@ -156,7 +221,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val notification = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(android.R.drawable.stat_sys_warning)
+            .setSmallIcon(R.drawable.ic_phishguard_logo)
             .setContentTitle("🚨 PhishGuard AI: Phishing Attack Intercepted!")
             .setContentText("Threat from WhatsApp (+8801999887766) - 96.9% Risk. Suspicious PIN verification link blocked.")
             .setStyle(NotificationCompat.BigTextStyle().bigText(

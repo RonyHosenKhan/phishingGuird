@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="16dp">
 
             <ImageView
                 android:layout_width="40dp"
@@ -54,7 +54,7 @@
             android:orientation="vertical"
             android:background="@color/surface_dark"
             android:padding="16dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="14dp">
 
             <TextView
                 android:id="@+id/tvServiceStatus"
@@ -82,7 +82,7 @@
             android:text="1. Grant Notification Listener Access"
             android:backgroundTint="@color/primary_sky"
             android:textColor="#FFFFFF"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="8dp" />
 
         <Button
             android:id="@+id/btnEnableAccessibility"
@@ -91,7 +91,16 @@
             android:text="2. Grant Accessibility Screen Scanner"
             android:backgroundTint="@color/primary_cyan"
             android:textColor="#FFFFFF"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnRebindService"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔄 Refresh &amp; Re-Bind Listener Service"
+            android:backgroundTint="#475569"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="8dp" />
 
         <Button
             android:id="@+id/btnTestSampleNotification"
@@ -100,7 +109,7 @@
             android:text="3. Test Threat Detection Alert"
             android:backgroundTint="@color/threat_critical"
             android:textColor="#FFFFFF"
-            android:layout_marginBottom="18dp" />
+            android:layout_marginBottom="16dp" />
 
         <!-- Live Intercepted Logs -->
         <TextView
