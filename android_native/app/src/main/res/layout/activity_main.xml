@@ -1,99 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/bg_dark"
-    android:padding="20dp">
+    android:fillViewport="true">
 
-    <!-- Brand Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="24dp">
+        android:orientation="vertical"
+        android:padding="20dp">
 
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@android:drawable/ic_lock_lock"
-            android:tint="@color/primary_sky" />
-
+        <!-- Brand Header -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginStart="12dp">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="20dp">
 
-            <TextView
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_phishguard_logo" />
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="PhishGuard AI"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PhishGuard AI"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tamanna Akter (21CSE012) - Mobile Computing Lab"
+                    android:textColor="#94A3B8"
+                    android:textSize="11sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Live Service Status Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/surface_dark"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:id="@+id/tvServiceStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Checking listener status..."
+                android:textColor="@color/threat_safe"
+                android:textSize="13sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tamanna Akter (21CSE012) - Mobile Computing Lab"
+                android:text="100% On-Device local AI inference without internet leaks."
                 android:textColor="#94A3B8"
-                android:textSize="11sp" />
+                android:textSize="11sp"
+                android:layout_marginTop="4dp" />
         </LinearLayout>
-    </LinearLayout>
 
-    <!-- Shield Status Card -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/surface_dark"
-        android:padding="20dp"
-        android:layout_marginBottom="16dp">
+        <!-- Permission Buttons -->
+        <Button
+            android:id="@+id/btnEnableNotificationListener"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1. Grant Notification Listener Access"
+            android:backgroundTint="@color/primary_sky"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="10dp" />
 
+        <Button
+            android:id="@+id/btnEnableAccessibility"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2. Grant Accessibility Screen Scanner"
+            android:backgroundTint="@color/primary_cyan"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/btnTestSampleNotification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="3. Test Threat Detection Alert"
+            android:backgroundTint="@color/threat_critical"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="18dp" />
+
+        <!-- Live Intercepted Logs -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="🛡️ Real-Time On-Device Protection"
-            android:textColor="@color/threat_safe"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:text="Real-Time Detection Activity:"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tvRecentLog"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Actively monitoring incoming SMS, WhatsApp, Messenger, and Gmail notifications. 100% of AI inference runs locally without internet leaks."
+            android:background="@color/surface_dark"
+            android:padding="14dp"
+            android:text="Listening for incoming WhatsApp, SMS, Messenger messages..."
             android:textColor="#CBD5E1"
             android:textSize="12sp"
-            android:layout_marginTop="6dp" />
+            android:lineSpacingExtra="3dp" />
+
     </LinearLayout>
-
-    <!-- Permission Action Buttons -->
-    <Button
-        android:id="@+id/btnEnableNotificationListener"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="1. Grant Notification Listener Access"
-        android:backgroundTint="@color/primary_sky"
-        android:textColor="#FFFFFF"
-        android:layout_marginBottom="12dp" />
-
-    <Button
-        android:id="@+id/btnEnableAccessibility"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="2. Grant Accessibility Screen Scanner"
-        android:backgroundTint="@color/primary_cyan"
-        android:textColor="#FFFFFF"
-        android:layout_marginBottom="12dp" />
-
-    <Button
-        android:id="@+id/btnTestSampleNotification"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="3. Test Threat Detection Alert"
-        android:backgroundTint="@color/threat_critical"
-        android:textColor="#FFFFFF" />
-
-</LinearLayout>
+</ScrollView>
