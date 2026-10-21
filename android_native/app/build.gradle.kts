@@ -17,9 +17,25 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("phishguard_release.jks")
+            storePassword = "phishguard2026"
+            keyAlias = "phishguard"
+            keyPassword = "phishguard2026"
+            enableV1Signing = true
+            enableV2Signing = true
+            enableV3Signing = true
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            val ks = file("phishguard_release.jks")
+            if (ks.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -27,6 +43,10 @@ android {
         }
         debug {
             isMinifyEnabled = false
+            val ks = file("phishguard_release.jks")
+            if (ks.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 

@@ -30,16 +30,26 @@ jobs:
         with:
           gradle-version: '8.5'
 
-      - name: Build Debug APK with Gradle
+      - name: Generate Official Release Keystore
+        working-directory: android_native/app
+        run: |
+          keytool -genkeypair -v -keystore phishguard_release.jks -alias phishguard -keyalg RSA -keysize 2048 -validity 10000 -storepass phishguard2026 -keypass phishguard2026 -dname "CN=Tamanna Akter, OU=Mobile Computing Lab, O=University of Barishal, L=Barishal, ST=Barishal, C=BD"
+
+      - name: Build Signed Release and Debug APKs
         working-directory: android_native
-        run: gradle assembleDebug --stacktrace --no-daemon
+        run: gradle assembleRelease assembleDebug --stacktrace --no-daemon
+
+      - name: Prepare Direct Download Assets
+        run: |
+          cp android_native/app/build/outputs/apk/release/app-release.apk PhishGuardAI.apk
+          cp android_native/app/build/outputs/apk/debug/app-debug.apk PhishGuardAI-Debug.apk
 
       - name: Upload Installable APK Artifact
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: PhishGuardAI-Debug-APK
-          path: android_native/app/build/outputs/apk/debug/app-debug.apk
+          name: PhishGuardAI-Release-APK
+          path: PhishGuardAI.apk
 
       - name: Release Latest APK
         uses: softprops/action-gh-release@v2
@@ -49,11 +59,13 @@ jobs:
           tag_name: latest
           name: "PhishGuard AI v1.2 (Live Threat Interceptor)"
           body: |
-            ### 🛡️ PhishGuard AI - Latest Updated APK
+            ### 🛡️ PhishGuard AI - Production Signed Release APK
+            - Certified RSA release signing (V1 + V2 + V3) to eliminate "App not installed" on Xiaomi/Redmi HyperOS.
             - Intercepts WhatsApp, SMS, Messenger & Gmail phishing in real-time.
             - On-Device Machine Learning (Random Forest + Deep Autoencoder).
             - Service Re-Bind button for Android 13/14 permissions.
           files: |
-            android_native/app/build/outputs/apk/debug/app-debug.apk
+            PhishGuardAI.apk
+            PhishGuardAI-Debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
